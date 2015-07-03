@@ -1,7 +1,7 @@
 RSpec.describe Pubsubic::Subscription do
-  name = :some_subscription
+  subscription_name = :some_subscription
 
-  let(:subscription) { described_class.new name }
+  let(:subscription) { described_class.new subscription_name }
 
   describe "class" do
     subject { described_class }
@@ -9,7 +9,7 @@ RSpec.describe Pubsubic::Subscription do
     describe ".new" do
       context "when correct arguments" do
         it "returns it's instance" do
-          expect(subject.new name).to be_instance_of(described_class)
+          expect(subject.new subscription_name).to be_instance_of(described_class)
         end
       end
 
@@ -24,15 +24,15 @@ RSpec.describe Pubsubic::Subscription do
   end
 
   describe "instance" do
-    let(:subscriber)  { Pubsubic::Subscriber.new { |m| "I've got message: #{m}" } }
-    let(:subscriber2) { Pubsubic::Subscriber.new { |m| m.to_s } }
-    let(:message)     { Pubsubic::Message.new("my message") }
+    let(:subscriber) { Pubsubic::Subscriber.new(:subscriber) { |m| "I've got message: #{m}" } }
+    let(:subscriber2) { Pubsubic::Subscriber.new(:subscriber2) { |m| m.to_s } }
+    let(:message) { Pubsubic::Message.new("my message") }
 
     subject { subscription }
 
     describe "#name" do
       it "returns name" do
-        expect(subject.name).to eq name
+        expect(subject.name).to eq subscription_name
       end
     end
 
@@ -70,10 +70,15 @@ RSpec.describe Pubsubic::Subscription do
     end
 
     describe "#publish" do
+      before do
+        subject.subscribe subscriber
+        subject.subscribe subscriber2
+      end
+
       context "when correct arguments" do
         it "sends it to subscribers" do
-          expect(subscriber).to receive(:notify).with(message)
-          expect(subscriber).to receive(:notify).with(message)
+          expect(subscriber).to receive(:notify).with(subscription_name, message)
+          expect(subscriber2).to receive(:notify).with(subscription_name, message)
 
           subject.publish(message)
         end
