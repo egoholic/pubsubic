@@ -24,7 +24,7 @@ module Pubsubic
     def publish(message)
       raise ArgumentError unless message.instance_of?(Message)
 
-      @subscribers.map { |s| s.notify(@name, message) }
+      @subscribers.each { |s| s.notify @name, message }
     end
   end
 end

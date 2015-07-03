@@ -13,7 +13,7 @@ module Pubsubic
     def subscriptions?(subscriptions)
       return false unless subscriptions.instance_of?(Array)
 
-      subscriptions.empty? || !subscriptions.all? { |s| s.instance_of?(Subscription) }
+      subscriptions.empty? && !subscriptions.all? { |s| s.instance_of?(Subscription) }
     end
   end
 end
