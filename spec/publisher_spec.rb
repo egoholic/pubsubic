@@ -1,5 +1,7 @@
 RSpec.describe Pubsubic::Publisher do
   let(:subscription) { Pubsubic::Subscription.new(:subscription) }
+  let(:subscription2) { Pubsubic::Subscription.new(:subscription2) }
+  let(:message) { Pubsubic::Message.new("message") } 
 
   describe "class" do
     subject { described_class }
@@ -28,10 +30,27 @@ RSpec.describe Pubsubic::Publisher do
   end
 
   describe "instance" do
-    subject { described_class.new [subscription] }
+    subject { described_class.new [subscription, subscription2] }
 
     describe "#publish" do
+      context "when correct arguments" do
+        it "publisize message to given subscriptions" do
+          expect(subscription).to receive(:publish).with message
+          expect(subscription2).to receive(:publish).with message
 
+          subject.publish message
+        end
+      end
+
+      context "when wrong arguments" do
+        it "raises ArgumentError" do
+          expect { subject.publish }.to raise_error(ArgumentError)
+          expect { subject.publish nil }.to raise_error(ArgumentError)
+          expect { subject.publish [] }.to raise_error(ArgumentError)
+          expect { subject.publish "message" }.to raise_error(ArgumentError)
+          expect { subject.publish :message }.to raise_error(ArgumentError)
+        end
+      end
     end
   end
 end

@@ -70,17 +70,17 @@ RSpec.describe Pubsubic::Subscription do
     end
 
     describe "#publish" do
-      before do
-        subject.subscribe subscriber
-        subject.subscribe subscriber2
-      end
-
       context "when correct arguments" do
+        before do
+          subject.subscribe subscriber
+          subject.subscribe subscriber2
+        end
+
         it "sends it to subscribers" do
           expect(subscriber).to receive(:notify).with(subscription_name, message)
           expect(subscriber2).to receive(:notify).with(subscription_name, message)
 
-          subject.publish(message)
+          subject.publish message
         end
       end
 
