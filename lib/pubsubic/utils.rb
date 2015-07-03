@@ -9,7 +9,7 @@ module Pubsubic
       when Array, Set
         obj.map { |o| dpdup o }
       when Hash
-        obj.each_with_object { |(k, v), hash| hash[dpdup(k)] = dpdup(v) }
+        obj.each_with_object({}) { |(k, v), h| h[dpdup(k)] = dpdup(v) }
       else
         obj.dup
       end
